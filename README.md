@@ -1,3 +1,3 @@
 # Build-A-Man
 
-This is a Build-A-Man (Hangman) game project from The Odin Project.
+This is a Build-A-Person (Hangman) word-guessing game project from The Odin Project.
