@@ -1,6 +1,6 @@
 
 class Game
-  attr_reader :secret_word, :guessed_word
+  attr_reader :secret_word, :guessed_word, :guesses_left
 
   def initialize
     @secret_word = get_secret_word
@@ -25,10 +25,10 @@ class Game
 
     until over?
       #display
-      #ask
-      guess = gets.chomp
-      if guess.invalid?
-        puts "invalid, try again"
+      print "What letter do you guess?: "
+      guess = gets.chomp.downcase
+      if invalid?(guess)
+        puts "Invalid, try again"
         next
       end
       #update, true if guess matches
@@ -37,13 +37,17 @@ class Game
   end
 
   def over?
-    true
+    guessed_word == secret_word || guesses_left == 0
   end
 
   def display
     puts "You have #{guesses_left} of guesses left"
     #display array of incorrect letters
     #display board with correct letters filled in
+  end
+
+  def invalid?(guess)
+    guess.length > 1 || ("a".."z").to_a.none? {|char| char == guess}
   end
 
 end
