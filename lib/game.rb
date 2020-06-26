@@ -22,16 +22,11 @@ class Game
   end
 
   def start
-
-
     until over?
       display
       print "What letter do you guess?: "
       guess = gets.chomp.downcase
-      if invalid?(guess)
-        puts "Invalid, try again"
-        next
-      end
+      next if invalid?(guess)
       #check if guess has already been guessed before
       #update, true if guess matches
       update(guess)
@@ -51,7 +46,13 @@ class Game
   end
 
   def invalid?(guess)
-    guess.length > 1 || ("a".."z").to_a.none? {|char| char == guess}
+    if guess.length > 1 || ("a".."z").to_a.none? {|char| char == guess}
+      puts "**Invalid, try again**"
+      true
+    elsif guessed_letters.include?(guess)
+      puts "**Sorry, you've already guessed that letter**"
+      true
+    end
   end
 
   def update(guess)
