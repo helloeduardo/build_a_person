@@ -1,11 +1,12 @@
 
 class Game
-  attr_reader :secret_word, :guessed_word, :guesses_left
+  attr_reader :secret_word, :guessed_word, :guesses_left, :guessed_letters
 
   def initialize
     @secret_word = get_secret_word
     @guessed_word = blank_secret_word
     @guesses_left = 12
+    @guessed_letters = []
   end
 
   def get_secret_word
@@ -24,14 +25,17 @@ class Game
 
 
     until over?
-      #display
+      display
       print "What letter do you guess?: "
       guess = gets.chomp.downcase
       if invalid?(guess)
         puts "Invalid, try again"
         next
       end
+      #check if guess has already been guessed before
       #update, true if guess matches
+      update(guess)
+      @guesses_left -= 1
     end
 
   end
@@ -41,13 +45,22 @@ class Game
   end
 
   def display
-    puts "You have #{guesses_left} of guesses left"
-    #display array of incorrect letters
-    #display board with correct letters filled in
+    puts "\nNumber of guesses left: #{guesses_left}"
+    puts "The letters you have guessed are '#{guessed_letters.join}'"
+    puts "#{guessed_word.join(" ")}"
   end
 
   def invalid?(guess)
     guess.length > 1 || ("a".."z").to_a.none? {|char| char == guess}
+  end
+
+  def update(guess)
+    secret_word.each_with_index do |letter, index|
+      if letter == guess
+        @guessed_word[index] = letter
+      end
+    end
+    guessed_letters << guess
   end
 
 end
