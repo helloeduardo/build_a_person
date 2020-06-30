@@ -1,5 +1,8 @@
+require 'yaml'
+require_relative "serializable"
 
 class Game
+  include Serializable
   attr_reader :secret_word, :guessed_word, :guesses_left, :guessed_letters
 
   def initialize
@@ -14,7 +17,7 @@ class Game
     dictionary.select! do |word|
       word.length.between?(5,12)
     end
-    dictionary.sample.downcase.chars
+    dictionary.sample.upcase.chars
   end
 
   def blank_secret_word
@@ -25,18 +28,29 @@ class Game
     until over?
       display
       print "What letter do you guess?: "
-      guess = gets.chomp.downcase
+      guess = gets.chomp.upcase
       next if invalid?(guess)
-      #check if guess has already been guessed before
       #update, true if guess matches
       update(guess)
       @guesses_left -= 1
     end
 
+    display
+
+    if won?
+      puts "Congratulations, you found the secret word, #{secret_word.join}!"
+    else
+      puts "Sorry, better luck next time"
+    end
+
   end
 
   def over?
-    guessed_word == secret_word || guesses_left == 0
+    won? || guesses_left == 0
+  end
+
+  def won?
+    guessed_word == secret_word
   end
 
   def display
@@ -46,7 +60,7 @@ class Game
   end
 
   def invalid?(guess)
-    if guess.length > 1 || ("a".."z").to_a.none? {|char| char == guess}
+    if guess.length > 1 || ("A".."Z").to_a.none? {|char| char == guess}
       puts "**Invalid, try again**"
       true
     elsif guessed_letters.include?(guess)
@@ -62,6 +76,22 @@ class Game
       end
     end
     guessed_letters << guess
+  end
+
+  def save_game
+    Dir.mkdir("saved_games") unless Dir.exists?("saved_games")
+
+    saved_game = "saved_games/saved_game"
+
+    File.open(saved_game, "w") {|file| file.puts self.serialize}
+  end
+
+  def load_game
+    saved_game = "saved_games/saved_game"
+
+    data = File.read(saved_game)
+
+    self.unserialize(data)
   end
 
 end
