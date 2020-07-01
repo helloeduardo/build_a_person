@@ -26,26 +26,20 @@ class Game
 
   def start
     check_load
+    game_loop
+    check_result
+  end
 
+  def game_loop
     until over?
       display
       print "Guess a letter or enter 'save' to save game: "
       guess = gets.chomp.upcase
       check_save(guess)
       next if invalid?(guess)
-      #update, true if guess matches
       update(guess)
       @guesses_left -= 1
     end
-
-    display
-
-    if won?
-      puts "Congratulations, you found the secret word, #{secret_word.join}!"
-    else
-      puts "Sorry, better luck next time"
-    end
-
   end
 
   def over?
@@ -54,6 +48,16 @@ class Game
 
   def won?
     guessed_word == secret_word
+  end
+
+  def check_result
+    display
+
+    if won?
+      puts "Congratulations, you found the secret word, #{secret_word.join}!"
+    else
+      puts "Sorry, better luck next time"
+    end
   end
 
   def display
