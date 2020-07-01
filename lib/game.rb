@@ -25,10 +25,13 @@ class Game
   end
 
   def start
+    check_load
+
     until over?
       display
-      print "What letter do you guess?: "
+      print "Guess a letter or enter 'save' to save game: "
       guess = gets.chomp.upcase
+      check_save(guess)
       next if invalid?(guess)
       #update, true if guess matches
       update(guess)
@@ -84,6 +87,14 @@ class Game
     saved_game = "saved_games/saved_game"
 
     File.open(saved_game, "w") {|file| file.puts self.serialize}
+
+    puts "\n * Game Saved! Goodbye * "
+
+    exit
+  end
+
+  def check_save(input)
+    save_game if input == "SAVE"
   end
 
   def load_game
@@ -92,6 +103,16 @@ class Game
     data = File.read(saved_game)
 
     self.unserialize(data)
+
+    puts "\n * Hello! Welcome back! * "
+  end
+
+  def check_load
+    if File.exists?("saved_games/saved_game")
+      print "Do you want to load a saved game? (Y/N): "
+      input = gets.chomp.upcase
+      load_game if input == "Y"
+    end
   end
 
 end
