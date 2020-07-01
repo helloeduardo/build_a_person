@@ -55,7 +55,7 @@ class Game
     if won?
       puts "Congratulations, you found the secret word, #{secret_word.join}!"
     else
-      puts "Sorry, better luck next time"
+      puts "Sorry, better luck next time. The word was #{secret_word.join}"
     end
   end
 
